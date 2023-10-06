@@ -1,10 +1,10 @@
-# eWaterCycle plugin for HYPE hydrological model
+# eWaterCycle plugin for PCRGlobWB hydrological model
 
-[![Research Software Directory Badge](https://img.shields.io/badge/rsd-00a3e3.svg)](https://www.research-software.nl/software/ewatercycle-hype)
+[![Research Software Directory Badge](https://img.shields.io/badge/rsd-00a3e3.svg)](https://www.research-software.nl/software/ewatercycle-pcrglobwb)
 
-HYPE plugin for [eWatercycle](https://ewatercycle.readthedocs.io/).
+PCRGlobWB plugin for [eWatercycle](https://ewatercycle.readthedocs.io/).
 
-HYPE documentation at http://www.smhi.net/hype/wiki/doku.php .
+PCRGLOBWB (PCRaster Global Water Balance) is a large-scale hydrological model with documentation at https://globalhydrology.nl/research/models/pcr-globwb-1-0/ .
 
 ## Installation
 
@@ -12,27 +12,29 @@ eWaterCycle must be installed in a [mamba](https://conda-forge.org/miniforge/) e
 
 ```console
 wget https://raw.githubusercontent.com/eWaterCycle/ewatercycle/main/environment.yml
-mamba env create --name ewatercycle-hype --file environment.yml
-conda activate ewatercycle-hype
+mamba env create --name ewatercycle-pcrglobwb --file environment.yml
+conda activate ewatercycle-pcrglobwb
 ```
 
 Install this package alongside your eWaterCycle installation
 
 ```console
-pip install ewatercycle-hype
+pip install ewatercycle-pcrglobwb
 ```
 
-Then Hype becomes available as one of the eWaterCycle models
+Then PCRGlobWB becomes available as one of the eWaterCycle models
 
 ```python
-from ewatercycle.models import Hype
+from ewatercycle.models import PCRGlobWB
 ```
 
 ## Usage
 
-Usage of HYPE forcing generation and model execution is shown in 
-[docs/generate_forcing.ipynb](https://github.com/eWaterCycle/ewatercycle-hype/tree/main/docs/generate_forcing.ipynb) and [docs/model.ipynb](https://github.com/eWaterCycle/ewatercycle-hype/tree/main/docs/model.ipynb) respectively.
+Usage of PCRGlobWB forcing generation and model execution is shown in 
+[docs/generate_forcing.ipynb](https://github.com/eWaterCycle/ewatercycle-pcrglobwb/tree/main/docs/generate_forcing.ipynb) and [docs/model.ipynb](https://github.com/eWaterCycle/ewatercycle-pcrglobwb/tree/main/docs/model.ipynb) respectively.
+
+Irrigation example at [docs/Irrigation.ipynb](dttps://github.com/eWaterCycle/ewatercycle-pcrglobwb/tree/main/ocs/Irrigation.ipynb).
 
 ## License
 
-`ewatercycle-hype` is distributed under the terms of the [Apache-2.0](https://spdx.org/licenses/Apache-2.0.html) license.
+`ewatercycle-pcrglobwb` is distributed under the terms of the [Apache-2.0](https://spdx.org/licenses/Apache-2.0.html) license.
