@@ -2,7 +2,7 @@
 
 [![Research Software Directory Badge](https://img.shields.io/badge/rsd-00a3e3.svg)](https://www.research-software.nl/software/ewatercycle-pcrglobwb)
 
-PCRGlobWB plugin for [eWatercycle](https://ewatercycle.readthedocs.io/).
+[eWatercycle](https://ewatercycle.readthedocs.io/) plugin for PCRGlobWB model.
 
 PCRGLOBWB (PCRaster Global Water Balance) is a large-scale hydrological model with documentation at https://globalhydrology.nl/research/models/pcr-globwb-1-0/ .
 
@@ -33,7 +33,7 @@ from ewatercycle.models import PCRGlobWB
 Usage of PCRGlobWB forcing generation and model execution is shown in 
 [docs/generate_forcing.ipynb](https://github.com/eWaterCycle/ewatercycle-pcrglobwb/tree/main/docs/generate_forcing.ipynb) and [docs/model.ipynb](https://github.com/eWaterCycle/ewatercycle-pcrglobwb/tree/main/docs/model.ipynb) respectively.
 
-Irrigation example at [docs/Irrigation.ipynb](dttps://github.com/eWaterCycle/ewatercycle-pcrglobwb/tree/main/ocs/Irrigation.ipynb).
+Irrigation example at [docs/Irrigation.ipynb](ttps://github.com/eWaterCycle/ewatercycle-pcrglobwb/tree/main/ocs/Irrigation.ipynb).
 
 ## License
 
