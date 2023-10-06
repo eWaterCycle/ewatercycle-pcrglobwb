@@ -36,3 +36,6 @@ PCRGlobWB = "ewatercycle_pcrglobwb.model:PCRGlobWB"
 PCRGlobWBForcing = "ewatercycle_pcrglobwb.forcing:PCRGlobWBForcing"
 [project.entry-points."ewatercycle.parameter_sets"]
 pcrglobwb_rhinemeuse_30min = "ewatercycle_pcrglobwb.parameter_sets:pcrglobwb_rhinemeuse_30min"
+
+[project.urls]
+homepage = "https://github.com/eWaterCycle/ewatercycle-pcrglobwb/"

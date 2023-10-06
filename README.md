@@ -1,6 +1,8 @@
 # eWaterCycle plugin for PCRGlobWB hydrological model
 
 [![Research Software Directory Badge](https://img.shields.io/badge/rsd-00a3e3.svg)](https://www.research-software.nl/software/ewatercycle-pcrglobwb)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8413752.svg)](https://doi.org/10.5281/zenodo.8413752)
+[![PyPI](https://img.shields.io/pypi/v/ewatercycle-pcrglobwb)](https://pypi.org/project/ewatercycle-pcrglobwb/)
 
 [eWatercycle](https://ewatercycle.readthedocs.io/) plugin for PCRGlobWB model.
 
