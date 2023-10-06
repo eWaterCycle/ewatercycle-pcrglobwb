@@ -33,7 +33,7 @@ from ewatercycle.models import PCRGlobWB
 Usage of PCRGlobWB forcing generation and model execution is shown in 
 [docs/generate_forcing.ipynb](https://github.com/eWaterCycle/ewatercycle-pcrglobwb/tree/main/docs/generate_forcing.ipynb) and [docs/model.ipynb](https://github.com/eWaterCycle/ewatercycle-pcrglobwb/tree/main/docs/model.ipynb) respectively.
 
-Irrigation example at [docs/Irrigation.ipynb](ttps://github.com/eWaterCycle/ewatercycle-pcrglobwb/tree/main/ocs/Irrigation.ipynb).
+Irrigation example at [docs/Irrigation.ipynb](https://github.com/eWaterCycle/ewatercycle-pcrglobwb/tree/main/docs/Irrigation.ipynb).
 
 ## License
 
