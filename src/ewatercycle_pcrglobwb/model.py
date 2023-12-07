@@ -2,10 +2,11 @@
 
 import logging
 from os import PathLike
-from typing import Any, ItemsView, Optional
+from typing import Any, ItemsView, Iterable, Optional
 
 import bmipy
 import numpy as np
+import xarray as xr
 from grpc4bmi.bmi_memoized import MemoizedBmi
 from grpc4bmi.bmi_optionaldest import OptionalDestBmi
 from pydantic import PrivateAttr, model_validator
@@ -170,3 +171,48 @@ class PCRGlobWB(ContainerizedModel):
             self._config.write(filename)
 
         return new_cfg_file
+
+    # Overwrite default methods which do not work due to the BMI being old:
+    def get_value_as_xarray(self, name: str) -> xr.DataArray:
+        y, x = self._bmi.get_grid_shape(0)
+        gridsize = x*y
+        dest = np.zeros(gridsize)
+        val = self._bmi.get_value(name, dest)
+
+        x_coords = self._bmi.get_grid_x(0, np.zeros(x))
+        y_coords = self._bmi.get_grid_y(0, np.zeros(y))
+        return xr.DataArray(
+            data=val.reshape(y, x),
+            coords={"latitude": x_coords, "longitude": y_coords},
+            dims=("longitude", "latitude")
+        )
+
+    def get_value(self, name):
+        y, x = self._bmi.get_grid_shape(0)
+        gridsize = x*y
+        dest = np.zeros(gridsize)
+        return self._bmi.get_value(name, dest)
+
+    def get_value_at_indices(self, name, inds):
+        return self.get_value(name)[inds]
+
+    def get_latlon_grid(self, name) -> tuple[Any, Any, Any]:
+        grid_id = self._bmi.get_var_grid(name)
+        shape = self._bmi.get_grid_shape(grid_id)
+        grid_lon = self._bmi.get_grid_x(grid_id, np.zeros(shape[1]))
+        grid_lat = self._bmi.get_grid_y(grid_id, np.zeros(shape[0]))
+        return grid_lat, grid_lon, shape
+
+    def get_value_at_coords(
+        self, name, lat: Iterable[float], lon: Iterable[float]
+    ) -> np.ndarray:
+        """Get a copy of values of the given variable at lat/lon coordinates.
+
+        Args:
+            name: Name of variable
+            lat: Latitudinal value
+            lon: Longitudinal value
+        """
+        indices = self._coords_to_indices(name, lat, lon)
+        indices = np.array(indices)
+        return self.get_value_at_indices(name, indices)
