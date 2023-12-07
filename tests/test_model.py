@@ -47,6 +47,9 @@ class MockedBmi(FailingModel):  # type: ignore
     def get_grid_spacing(self, grid_id):
         return 1.0, 1.0
 
+    def get_value(self, name, dest):
+        return np.array([0, 0, 0, 0, 1, 0])
+
     def get_value_at_indices(self, name, dest, indices):
         self.indices = indices
         return np.array([1.0])
