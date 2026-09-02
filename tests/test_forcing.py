@@ -76,6 +76,7 @@ class TestGenerateWithExtractRegion:
             [
                 "start_time='1989-01-02T00:00:00Z' end_time='1999-01-02T00:00:00Z' ",
                 f"directory={repr(tmp_path)} shape={repr(Path(sample_shape))} ",
+                "filenames={}",
                 "precipitationNC='pcrglobwb_pr.nc' temperatureNC='pcrglobwb_tas.nc'",
             ]
         )
@@ -85,11 +86,13 @@ class TestGenerateWithExtractRegion:
 
     def test_saved_yaml_content(self, forcing, tmp_path):
         saved_forcing = (tmp_path / FORCING_YAML).read_text()
-        # shape should is not included in the yaml file
+        # shape should be included in the yaml file
         expected = dedent(
             """\
         start_time: '1989-01-02T00:00:00Z'
         end_time: '1999-01-02T00:00:00Z'
+        shape: Rhine.shp
+        filenames: {}
         precipitationNC: pcrglobwb_pr.nc
         temperatureNC: pcrglobwb_tas.nc
         """
@@ -100,7 +103,7 @@ class TestGenerateWithExtractRegion:
     def test_saved_yaml_by_loading(self, forcing, tmp_path):
         saved_forcing = PCRGlobWBForcing.load(tmp_path)
         # shape should is not included in the yaml file
-        forcing.shape = None
+        forcing.shape = tmp_path / "Rhine.shp"
 
         assert forcing == saved_forcing
 
