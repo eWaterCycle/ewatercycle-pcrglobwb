@@ -30,5 +30,5 @@ pcrglobwb_rhinemeuse_30min = ParameterSet.from_github(
     # DOI of big set on github is very small test set
     doi="https://doi.org/10.5281/zenodo.1045339",
     target_model="pcrglobwb",
-    supported_model_versions={"v0.2.0"},
+    supported_model_versions={"v0.2.1"},
 )
