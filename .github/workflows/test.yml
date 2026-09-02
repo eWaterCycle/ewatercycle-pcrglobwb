@@ -19,7 +19,7 @@ jobs:
       - name: Download mamba environment.yml
         run:
           # wget https://raw.githubusercontent.com/eWaterCycle/ewatercycle/main/environment.yml
-          wget https://github.com/eWaterCycle/ewatercycle/blob/main/conda-lock.yml
+          wget https://raw.githubusercontent.com/eWaterCycle/ewatercycle/main/conda-lock.yml
       - uses: mamba-org/setup-micromamba@v1
         with:
           environment-file: environment.yml
