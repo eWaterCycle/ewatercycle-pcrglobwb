@@ -76,7 +76,7 @@ class TestGenerateWithExtractRegion:
             [
                 "start_time='1989-01-02T00:00:00Z' end_time='1999-01-02T00:00:00Z' ",
                 f"directory={repr(tmp_path)} shape={repr(Path(sample_shape))} ",
-                "filenames={}",
+                "filenames={} ",
                 "precipitationNC='pcrglobwb_pr.nc' temperatureNC='pcrglobwb_tas.nc'",
             ]
         )
