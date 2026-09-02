@@ -134,8 +134,9 @@ def test_setup_withtimeoutexception(model, tmp_path):
         model.setup()
 
     msg = str(excinfo.value)
-    assert "docker://ewatercycle/pcrg-grpc4bmi:setters" in msg
-    assert "ewatercycle-pcrg-grpc4bmi_setters.sif" in msg
+    model_version = "v0.2.1"
+    assert f"docker://ghcr.io/ewatercycle/pcrglobwb-grpc4bmi:{model_version}" in msg
+    assert f"ewatercycle-pcrglobwb-grpc4bmi_{model_version}.sif" in msg
 
 
 def test_setup_with_custom_cfg_dir(model, tmp_path):
