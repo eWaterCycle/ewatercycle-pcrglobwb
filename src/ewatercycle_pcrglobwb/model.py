@@ -120,12 +120,18 @@ class PCRGlobWB(ContainerizedModel):
         if self.forcing:
             self._additional_input_dirs.append(str(self.forcing.directory))
 
+        wrappers = (MemoizedBmi, OptionalDestBmi)
+        if self.bmi_image.version in ["setters", "v0.2.0", "v0.2.1"]:
+            wrappers += (_SwapXY,)  # tags before <new tag name> needed corrective glasses
+
+
+
         return start_container(
             image=self.bmi_image,
             work_dir=self._cfg_dir,
             input_dirs=self._additional_input_dirs,
             timeout=300,
-            wrappers=(_SwapXY, MemoizedBmi, OptionalDestBmi),
+            wrappers=wrappers,
         )
 
     def _update_config(self, **kwargs):
