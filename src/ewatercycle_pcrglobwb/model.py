@@ -104,6 +104,8 @@ class PCRGlobWB(ContainerizedModel):
                     to_absolute_path(
                         self.cloneMap,
                         parent=self.parameter_set.directory,
+                        must_be_in_parent=False,
+                        must_exist=True,
                     )
                 ),
             )
@@ -116,6 +118,8 @@ class PCRGlobWB(ContainerizedModel):
                     to_absolute_path(
                         self.landmask,
                         parent=self.parameter_set.directory,
+                        must_be_in_parent=False,
+                        must_exist=True,
                     )
                 ),
             )
