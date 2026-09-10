@@ -7,6 +7,7 @@ from typing import Any, ItemsView, Iterable, Optional
 import bmipy
 import numpy as np
 import xarray as xr
+from pathlib import Path
 from grpc4bmi.bmi_memoized import MemoizedBmi
 from grpc4bmi.bmi_optionaldest import OptionalDestBmi
 from pydantic import PrivateAttr, model_validator
@@ -50,6 +51,8 @@ class PCRGlobWB(ContainerizedModel):
 
     forcing: Optional[PCRGlobWBForcing] = None
     parameter_set: ParameterSet  # not optional for this model
+    cloneMap: str | Path | None = None
+    landmask: str | Path | None = None
     bmi_image: ContainerImage = ContainerImage("ghcr.io/ewatercycle/pcrglobwb-grpc4bmi:v0.2.1")
 
     _config: CaseConfigParser = PrivateAttr()
@@ -93,6 +96,29 @@ class PCRGlobWB(ContainerizedModel):
                     )
                 ),
             )
+        if self.cloneMap:
+            cfg.set(
+                "globalOptions",
+                "cloneMap",
+                str(
+                    to_absolute_path(
+                        self.cloneMap,
+                        parent=self.parameter_set.directory,
+                    )
+                ),
+            )
+
+        if self.landmask:
+            cfg.set(
+                "globalOptions",
+                "landmask",
+                str(
+                    to_absolute_path(
+                        self.landmask,
+                        parent=self.parameter_set.directory,
+                    )
+                ),
+            )
 
         self._config = cfg
         return self
@@ -119,6 +145,16 @@ class PCRGlobWB(ContainerizedModel):
             self._additional_input_dirs.append(str(self.parameter_set.directory))
         if self.forcing:
             self._additional_input_dirs.append(str(self.forcing.directory))
+
+        if self.cloneMap:
+            clone_dir = str(Path(self.cloneMap).parent)
+            if clone_dir not in self._additional_input_dirs:
+                self._additional_input_dirs.append(clone_dir)
+
+        if self.landmask:
+            landmask_dir = str(Path(self.landmask).parent)
+            if landmask_dir not in self._additional_input_dirs:
+                self._additional_input_dirs.append(landmask_dir)
 
         wrappers = (MemoizedBmi, OptionalDestBmi)
         if self.bmi_image.version in ["setters", "v0.2.0", "v0.2.1"]:
