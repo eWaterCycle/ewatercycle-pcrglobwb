@@ -83,6 +83,8 @@ class PCRGlobWB(ContainerizedModel):
                     to_absolute_path(
                         self.forcing.temperatureNC,
                         parent=self.forcing.directory,
+                        must_be_in_parent=False,
+                        must_exist=True,
                     )
                 ),
             )
@@ -93,6 +95,8 @@ class PCRGlobWB(ContainerizedModel):
                     to_absolute_path(
                         self.forcing.precipitationNC,
                         parent=self.forcing.directory,
+                        must_be_in_parent=False,
+                        must_exist=True,
                     )
                 ),
             )
@@ -159,6 +163,20 @@ class PCRGlobWB(ContainerizedModel):
             landmask_dir = str(Path(self.landmask).parent)
             if landmask_dir not in self._additional_input_dirs:
                 self._additional_input_dirs.append(landmask_dir)
+
+        
+        # Remove nested directories when their parent is already mounted.
+        dirs = [Path(d).resolve() for d in self._additional_input_dirs]
+        filtered_dirs = []
+
+        for d in dirs:
+            if not any(
+                d != parent and d.is_relative_to(parent)
+                for parent in dirs
+            ):
+                filtered_dirs.append(d)
+
+        self._additional_input_dirs = [str(d) for d in filtered_dirs]
 
         wrappers = (MemoizedBmi, OptionalDestBmi)
         if self.bmi_image.version in ["setters", "v0.2.0", "v0.2.1"]:
