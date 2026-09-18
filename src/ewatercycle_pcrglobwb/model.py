@@ -53,7 +53,7 @@ class PCRGlobWB(ContainerizedModel):
     parameter_set: ParameterSet  # not optional for this model
     cloneMap: str | Path | None = None
     landmask: str | Path | None = None
-    bmi_image: ContainerImage = ContainerImage("ghcr.io/ewatercycle/pcrglobwb-grpc4bmi:v0.2.1")
+    bmi_image: ContainerImage = ContainerImage("ghcr.io/ewatercycle/pcrglobwb-grpc4bmi:v0.2.2")
 
     _config: CaseConfigParser = PrivateAttr()
 
