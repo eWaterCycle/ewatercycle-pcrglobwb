@@ -1,22 +1,23 @@
 """eWaterCycle wrapper around PCRGlobWB BMI."""
 
 import logging
+from collections.abc import ItemsView, Iterable
 from os import PathLike
-from typing import Any, ItemsView, Iterable, Optional
+from pathlib import Path
+from typing import Any
 
 import bmipy
 import numpy as np
 import xarray as xr
-from pathlib import Path
+from ewatercycle.base.model import ContainerizedModel
+from ewatercycle.base.parameter_set import ParameterSet
+from ewatercycle.container import BmiProxy, ContainerImage, start_container
+from ewatercycle.util import CaseConfigParser, get_time, to_absolute_path
 from grpc4bmi.bmi_memoized import MemoizedBmi
 from grpc4bmi.bmi_optionaldest import OptionalDestBmi
 from pydantic import PrivateAttr, model_validator
 
-from ewatercycle.base.model import ContainerizedModel
-from ewatercycle.base.parameter_set import ParameterSet
-from ewatercycle.container import BmiProxy, ContainerImage, start_container
 from ewatercycle_pcrglobwb.forcing import PCRGlobWBForcing
-from ewatercycle.util import CaseConfigParser, get_time, to_absolute_path
 
 logger = logging.getLogger(__name__)
 
@@ -49,11 +50,13 @@ class PCRGlobWB(ContainerizedModel):
 
     """
 
-    forcing: Optional[PCRGlobWBForcing] = None
+    forcing: PCRGlobWBForcing | None = None
     parameter_set: ParameterSet  # not optional for this model
     cloneMap: str | Path | None = None
     landmask: str | Path | None = None
-    bmi_image: ContainerImage = ContainerImage("ghcr.io/ewatercycle/pcrglobwb-grpc4bmi:v0.2.3")
+    bmi_image: ContainerImage = ContainerImage(
+        "ghcr.io/ewatercycle/pcrglobwb-grpc4bmi:v0.2.3"
+    )
 
     _config: CaseConfigParser = PrivateAttr()
 
@@ -164,16 +167,12 @@ class PCRGlobWB(ContainerizedModel):
             if landmask_dir not in self._additional_input_dirs:
                 self._additional_input_dirs.append(landmask_dir)
 
-        
         # Remove nested directories when their parent is already mounted.
         dirs = [Path(d).resolve() for d in self._additional_input_dirs]
         filtered_dirs = []
 
         for d in dirs:
-            if not any(
-                d != parent and d.is_relative_to(parent)
-                for parent in dirs
-            ):
+            if not any(d != parent and d.is_relative_to(parent) for parent in dirs):
                 filtered_dirs.append(d)
 
         self._additional_input_dirs = [str(d) for d in filtered_dirs]
@@ -181,9 +180,9 @@ class PCRGlobWB(ContainerizedModel):
         # Fixed from v0.2.2 onwards
         wrappers = (MemoizedBmi, OptionalDestBmi)
         if self.bmi_image.version in ["setters", "v0.2.0", "v0.2.1"]:
-            wrappers += (_SwapXY,)  # tags before <new tag name> needed corrective glasses
-
-
+            wrappers += (
+                _SwapXY,
+            )  # tags before <new tag name> needed corrective glasses
 
         return start_container(
             image=self.bmi_image,
@@ -240,7 +239,7 @@ class PCRGlobWB(ContainerizedModel):
     # Overwrite default methods which do not work due to the BMI being old:
     def get_value_as_xarray(self, name: str) -> xr.DataArray:
         y, x = self._bmi.get_grid_shape(0)
-        gridsize = x*y
+        gridsize = x * y
         dest = np.zeros(gridsize)
         val = self._bmi.get_value(name, dest)
 
@@ -249,12 +248,12 @@ class PCRGlobWB(ContainerizedModel):
         return xr.DataArray(
             data=val.reshape(y, x),
             coords={"latitude": x_coords, "longitude": y_coords},
-            dims=("longitude", "latitude")
+            dims=("longitude", "latitude"),
         )
 
     def get_value(self, name):
         y, x = self._bmi.get_grid_shape(0)
-        gridsize = x*y
+        gridsize = x * y
         dest = np.zeros(gridsize)
         return self._bmi.get_value(name, dest)
 

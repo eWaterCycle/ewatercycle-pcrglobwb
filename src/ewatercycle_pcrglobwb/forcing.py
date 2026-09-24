@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 from ewatercycle.base.forcing import DefaultForcing
 from ewatercycle.esmvaltool.builder import RecipeBuilder
@@ -64,8 +63,8 @@ class PCRGlobWBForcing(DefaultForcing):
             )
     """
 
-    precipitationNC: Optional[str] = "precipitation.nc"
-    temperatureNC: Optional[str] = "temperature.nc"
+    precipitationNC: str | None = "precipitation.nc"
+    temperatureNC: str | None = "temperature.nc"
 
     @classmethod
     def generate(  # type: ignore
@@ -76,8 +75,8 @@ class PCRGlobWBForcing(DefaultForcing):
         shape: str,
         start_time_climatology: str,  # TODO make optional, default to start_time
         end_time_climatology: str,  # TODO make optional, defaults to start_time + 1 y
-        extract_region: Optional[dict] = None,
-        directory: Optional[str] = None,
+        extract_region: dict | None = None,
+        directory: str | None = None,
     ) -> "PCRGlobWBForcing":
         """Generate forcings for a model.
 
@@ -104,7 +103,7 @@ class PCRGlobWBForcing(DefaultForcing):
                 `end_latitude`
         """
         # method is replicated here to document the model specific options
-        return super(PCRGlobWBForcing, cls).generate(
+        return super().generate(
             dataset=dataset,
             start_time=start_time,
             end_time=end_time,

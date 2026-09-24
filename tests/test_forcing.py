@@ -5,14 +5,14 @@ import pytest
 from esmvalcore.experimental import Recipe
 from esmvalcore.experimental.recipe_info import RecipeInfo
 from esmvalcore.experimental.recipe_output import RecipeOutput
-
 from ewatercycle.base.forcing import FORCING_YAML
+from ewatercycle.testing.helpers import create_netcdf, reyamlify
+from ewatercycle.util import get_extents
+
 from ewatercycle_pcrglobwb.forcing import (
     PCRGlobWBForcing,
     build_pcrglobwb_recipe,
 )
-from ewatercycle.testing.helpers import create_netcdf, reyamlify
-from ewatercycle.util import get_extents
 
 
 @pytest.fixture
@@ -76,7 +76,7 @@ class TestGenerateWithExtractRegion:
         expected = "".join(
             [
                 "start_time='1989-01-02T00:00:00Z' end_time='1999-01-02T00:00:00Z' ",
-                f"directory={repr(tmp_path)} shape={repr(Path(sample_shape))} ",
+                f"directory={tmp_path!r} shape={Path(sample_shape)!r} ",
                 "filenames={} ",
                 "precipitationNC='pcrglobwb_pr.nc' temperatureNC='pcrglobwb_tas.nc'",
             ]

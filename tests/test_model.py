@@ -5,16 +5,16 @@ from unittest.mock import patch
 
 import numpy as np
 import pytest
-from grpc import FutureTimeoutError
-from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
-from grpc4bmi.bmi_optionaldest import OptionalDestBmi
-
 from ewatercycle import CFG
 from ewatercycle.base.parameter_set import ParameterSet
 from ewatercycle.forcing import sources
 from ewatercycle.parameter_sets import add_to_config, example_parameter_sets
-from ewatercycle_pcrglobwb.model import PCRGlobWB, _SwapXY
 from ewatercycle.testing.fake_models import FailingModel
+from grpc import FutureTimeoutError
+from grpc4bmi.bmi_client_apptainer import BmiClientApptainer
+from grpc4bmi.bmi_optionaldest import OptionalDestBmi
+
+from ewatercycle_pcrglobwb.model import PCRGlobWB, _SwapXY
 
 PCRGlobWBForcing = sources["PCRGlobWBForcing"]
 
@@ -125,11 +125,11 @@ def test_setup(model):
 
 
 def test_setup_withtimeoutexception(model, tmp_path):
-    with patch.object(
-        BmiClientApptainer, "__init__", side_effect=FutureTimeoutError()
-    ), patch("datetime.datetime") as mocked_datetime, pytest.raises(
-        TimeoutError
-    ) as excinfo:
+    with (
+        patch.object(BmiClientApptainer, "__init__", side_effect=FutureTimeoutError()),
+        patch("datetime.datetime") as mocked_datetime,
+        pytest.raises(TimeoutError) as excinfo,
+    ):
         mocked_datetime.now.return_value = datetime(2021, 1, 2, 3, 4, 5)
         model.setup()
 
@@ -141,9 +141,10 @@ def test_setup_withtimeoutexception(model, tmp_path):
 
 def test_setup_with_custom_cfg_dir(model, tmp_path):
     my_cfg_dir = str(tmp_path / "mycfgdir")
-    with patch.object(BmiClientApptainer, "__init__", return_value=None), patch(
-        "datetime.datetime"
-    ) as mocked_datetime:
+    with (
+        patch.object(BmiClientApptainer, "__init__", return_value=None),
+        patch("datetime.datetime") as mocked_datetime,
+    ):
         mocked_datetime.now.return_value = datetime(2021, 1, 2, 3, 4, 5)
 
         cfg_file, cfg_dir = model.setup(cfg_dir=my_cfg_dir)
@@ -167,9 +168,8 @@ def test_get_value_as_coords(initialized_model, caplog):
     assert msg[1] in caplog.text
     assert result == np.array([1.0])
 
-def test_setup_with_external_clone_map_and_landmask(
-    parameter_set, forcing, tmp_path
-):
+
+def test_setup_with_external_clone_map_and_landmask(parameter_set, forcing, tmp_path):
     external_dir = tmp_path / "external"
     external_dir.mkdir()
 
@@ -187,5 +187,4 @@ def test_setup_with_external_clone_map_and_landmask(
     )
 
     assert model._config.get("globalOptions", "cloneMap") == str(clone_map)
-    assert model._config.get("globalOptions", "landmask") == str(landmask)   
-
+    assert model._config.get("globalOptions", "landmask") == str(landmask)

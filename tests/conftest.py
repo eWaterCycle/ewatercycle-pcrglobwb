@@ -1,5 +1,4 @@
 import pytest
-
 from ewatercycle.testing import rhine_shape
 
 
