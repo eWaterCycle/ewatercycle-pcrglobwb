@@ -53,7 +53,7 @@ class PCRGlobWB(ContainerizedModel):
     parameter_set: ParameterSet  # not optional for this model
     cloneMap: str | Path | None = None
     landmask: str | Path | None = None
-    bmi_image: ContainerImage = ContainerImage("ghcr.io/ewatercycle/pcrglobwb-grpc4bmi:v0.2.2")
+    bmi_image: ContainerImage = ContainerImage("ghcr.io/ewatercycle/pcrglobwb-grpc4bmi:v0.2.3")
 
     _config: CaseConfigParser = PrivateAttr()
 
@@ -178,6 +178,7 @@ class PCRGlobWB(ContainerizedModel):
 
         self._additional_input_dirs = [str(d) for d in filtered_dirs]
 
+        # Fixed from v0.2.2 onwards
         wrappers = (MemoizedBmi, OptionalDestBmi)
         if self.bmi_image.version in ["setters", "v0.2.0", "v0.2.1"]:
             wrappers += (_SwapXY,)  # tags before <new tag name> needed corrective glasses
