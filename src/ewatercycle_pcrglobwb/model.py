@@ -7,6 +7,7 @@ from typing import Any, ItemsView, Iterable, Optional
 import bmipy
 import numpy as np
 import xarray as xr
+from pathlib import Path
 from grpc4bmi.bmi_memoized import MemoizedBmi
 from grpc4bmi.bmi_optionaldest import OptionalDestBmi
 from pydantic import PrivateAttr, model_validator
@@ -50,7 +51,9 @@ class PCRGlobWB(ContainerizedModel):
 
     forcing: Optional[PCRGlobWBForcing] = None
     parameter_set: ParameterSet  # not optional for this model
-    bmi_image: ContainerImage = ContainerImage("ghcr.io/ewatercycle/pcrglobwb-grpc4bmi:v0.2.1")
+    cloneMap: str | Path | None = None
+    landmask: str | Path | None = None
+    bmi_image: ContainerImage = ContainerImage("ghcr.io/ewatercycle/pcrglobwb-grpc4bmi:v0.2.3")
 
     _config: CaseConfigParser = PrivateAttr()
 
@@ -80,6 +83,8 @@ class PCRGlobWB(ContainerizedModel):
                     to_absolute_path(
                         self.forcing.temperatureNC,
                         parent=self.forcing.directory,
+                        must_be_in_parent=False,
+                        must_exist=True,
                     )
                 ),
             )
@@ -90,6 +95,35 @@ class PCRGlobWB(ContainerizedModel):
                     to_absolute_path(
                         self.forcing.precipitationNC,
                         parent=self.forcing.directory,
+                        must_be_in_parent=False,
+                        must_exist=True,
+                    )
+                ),
+            )
+        if self.cloneMap:
+            cfg.set(
+                "globalOptions",
+                "cloneMap",
+                str(
+                    to_absolute_path(
+                        self.cloneMap,
+                        parent=self.parameter_set.directory,
+                        must_be_in_parent=False,
+                        must_exist=True,
+                    )
+                ),
+            )
+
+        if self.landmask:
+            cfg.set(
+                "globalOptions",
+                "landmask",
+                str(
+                    to_absolute_path(
+                        self.landmask,
+                        parent=self.parameter_set.directory,
+                        must_be_in_parent=False,
+                        must_exist=True,
                     )
                 ),
             )
@@ -120,12 +154,43 @@ class PCRGlobWB(ContainerizedModel):
         if self.forcing:
             self._additional_input_dirs.append(str(self.forcing.directory))
 
+        if self.cloneMap:
+            clone_dir = str(Path(self.cloneMap).parent)
+            if clone_dir not in self._additional_input_dirs:
+                self._additional_input_dirs.append(clone_dir)
+
+        if self.landmask:
+            landmask_dir = str(Path(self.landmask).parent)
+            if landmask_dir not in self._additional_input_dirs:
+                self._additional_input_dirs.append(landmask_dir)
+
+        
+        # Remove nested directories when their parent is already mounted.
+        dirs = [Path(d).resolve() for d in self._additional_input_dirs]
+        filtered_dirs = []
+
+        for d in dirs:
+            if not any(
+                d != parent and d.is_relative_to(parent)
+                for parent in dirs
+            ):
+                filtered_dirs.append(d)
+
+        self._additional_input_dirs = [str(d) for d in filtered_dirs]
+
+        # Fixed from v0.2.2 onwards
+        wrappers = (MemoizedBmi, OptionalDestBmi)
+        if self.bmi_image.version in ["setters", "v0.2.0", "v0.2.1"]:
+            wrappers += (_SwapXY,)  # tags before <new tag name> needed corrective glasses
+
+
+
         return start_container(
             image=self.bmi_image,
             work_dir=self._cfg_dir,
             input_dirs=self._additional_input_dirs,
             timeout=300,
-            wrappers=(_SwapXY, MemoizedBmi, OptionalDestBmi),
+            wrappers=wrappers,
         )
 
     def _update_config(self, **kwargs):

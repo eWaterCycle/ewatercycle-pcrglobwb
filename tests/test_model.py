@@ -134,7 +134,7 @@ def test_setup_withtimeoutexception(model, tmp_path):
         model.setup()
 
     msg = str(excinfo.value)
-    model_version = "v0.2.1"
+    model_version = model.bmi_image.version
     assert f"docker://ghcr.io/ewatercycle/pcrglobwb-grpc4bmi:{model_version}" in msg
     assert f"ewatercycle-pcrglobwb-grpc4bmi_{model_version}.sif" in msg
 
@@ -166,3 +166,26 @@ def test_get_value_as_coords(initialized_model, caplog):
     assert msg[0] in caplog.text
     assert msg[1] in caplog.text
     assert result == np.array([1.0])
+
+def test_setup_with_external_clone_map_and_landmask(
+    parameter_set, forcing, tmp_path
+):
+    external_dir = tmp_path / "external"
+    external_dir.mkdir()
+
+    clone_map = external_dir / "clone.map"
+    landmask = external_dir / "landmask.map"
+
+    clone_map.touch()
+    landmask.touch()
+
+    model = PCRGlobWB(
+        parameter_set=parameter_set,
+        forcing=forcing,
+        cloneMap=clone_map,
+        landmask=landmask,
+    )
+
+    assert model._config.get("globalOptions", "cloneMap") == str(clone_map)
+    assert model._config.get("globalOptions", "landmask") == str(landmask)   
+

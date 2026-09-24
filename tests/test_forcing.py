@@ -27,6 +27,7 @@ def mock_recipe_run(monkeypatch, tmp_path):
                 create_netcdf("tas", tmp_path / "pcrglobwb_tas.nc"): {},
             }
         },
+        session=None,
         info=RecipeInfo({"diagnostics": {"diagnostic": {}}}, "script"),
     )
 
